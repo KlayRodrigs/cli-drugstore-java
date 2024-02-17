@@ -16,7 +16,6 @@ abstract class UserEntity {
      public String getName() {
           return name;
      }
-
      public void setName(String name) {
           this.name = name;
      }
@@ -24,7 +23,6 @@ abstract class UserEntity {
      public String getLogin() {
           return login;
      }
-
      public void setLogin(String login) {
           this.login = login;
      }
@@ -32,23 +30,13 @@ abstract class UserEntity {
      public String getPassword() {
           return password;
      }
-
      public void setPassword(String password) {
           this.password = password;
-     }
-
-     public String getNome() {
-          return name;
-     }
-
-     public void setNome(String nome) {
-          this.name = nome;
      }
 
      public String getCpf() {
           return cpf;
      }
-
      public void setCpf(String cpf) {
           this.cpf = cpf;
      }
