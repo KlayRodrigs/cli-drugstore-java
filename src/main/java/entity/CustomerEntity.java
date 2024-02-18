@@ -4,8 +4,8 @@ public class CustomerEntity extends UserEntity {
     private AdressEntity adressEntity;
     private String phoneNumber;
 
-    public CustomerEntity(String name, String cpf, String login, String password, AdressEntity adressEntity, String phoneNumber ) {
-        super(name, cpf, login, password);
+    public CustomerEntity(String name, String cpf, String password, AdressEntity adressEntity, String phoneNumber) {
+        super(name, cpf, password);
         this.adressEntity = adressEntity;
         this.phoneNumber = phoneNumber;
     }

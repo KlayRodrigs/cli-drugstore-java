@@ -3,8 +3,8 @@ package main.java.entity;
 public class AdministratorEntity extends UserEntity {
     private long admCode;
 
-    public AdministratorEntity(String name, String cpf, String login, String password, long admCode) {
-        super(name, cpf, login, password);
+    public AdministratorEntity(String name, String cpf, long admCode,String password) {
+        super(name, cpf, password);
         this.admCode = admCode;
     }
 

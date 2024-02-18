@@ -2,17 +2,15 @@ package main.java.view;
 
 import main.java.service.CustomerService;
 
-import java.io.IOException;
 import java.util.Scanner;
 
 import static main.java.constants.Constants.*;
 
 public class MenuView {
-    //Just for testing
     CustomerService customerService = new CustomerService();
     Scanner scanner = new Scanner(System.in);
 
-    public void initialMenu() throws IOException {
+    public void initialMenu() throws Exception {
         System.out.println("-".repeat(10) + "WELCOME TO DRUGSTORE" + "-".repeat(10) + "\nPlease, select an option bellow: ");
         System.out.println("1. Customer login\n2. Administrator login\n3. Customer Sign up\n0. Exit");
         System.out.println("-".repeat(40));
@@ -26,17 +24,26 @@ public class MenuView {
         }
     }
 
-    public void login(Boolean customer) {
-        String type = customer ? CUSTOMER : ADMINSTRATOR;
-        System.out.println("-".repeat(13) + type + " login selected" + "-".repeat(13) + "\nLogin: ");
-        var login = scanner.nextLine();
-        System.out.println("Password: ");
-        var password = scanner.nextLine();
-        if (customer) {
-            System.out.println("Customer");
-        } else {
-            System.out.println("Administrator");
+    public void login(Boolean customer) throws Exception {
+        String title = customer ? CUSTOMER : ADMINSTRATOR;
+        String type = customer ? BD_CUSTOMER : BD_ADMINISTRATOR;
+        System.out.println("-".repeat(13) + title + " login selected" + "-".repeat(13) + "\nCPF(Just numbers): ");
+        String cpf = scanner.next();
+        if (cpf.length() != 11) {
+            throw new Exception(ERROR_INVALID_CPF);
         }
+        System.out.println("Password: ");
+        var password = scanner.next();
+        if (customerService.loginCheckCredentials(BD_PATH + type, cpf, password)) {
+            if (type.equals(BD_CUSTOMER)) {
+                customerPainel();
+            } else {
+                administratorPainel();
+            }
+        } else {
+            System.out.println(ERROR_WRONG_CREDENTIALS);
+        }
+        initialMenu();
     }
 
     public void customerPainel() {
@@ -71,26 +78,29 @@ public class MenuView {
         }
     }
 
-    public void signUpCustomer() throws IOException {
+    public void signUpCustomer() throws Exception {
         System.out.println("-".repeat(11) + CUSTOMER + " sign up selected" + "-".repeat(11));
         System.out.print("Name: \n");
-        String name = scanner.next();
-        System.out.println("CPF: ");
-        String cpf = scanner.next();
-        System.out.println("Login: ");
-        String login = scanner.next();
-        System.out.println("Password: ");
-        String password = scanner.next();
-        System.out.println("Street: ");
-        String street = scanner.next();
-        System.out.println("District: ");
-        String district = scanner.next();
-        System.out.println("House's number: ");
-        String number = scanner.next();
-        System.out.println("Zipcode: ");
-        String zipCode = scanner.next();
-        System.out.println("Phone number: ");
-        String phoneNumber = scanner.next();
-        customerService.addCustomer(name, cpf, login, password, street, district, number, zipCode, phoneNumber);
+        scanner.nextLine();
+        String name = scanner.nextLine();
+        System.out.print("CPF(Just numbers): \n");
+        String cpf = scanner.nextLine();
+        if(customerService.findElement(BD_PATH+BD_CUSTOMER, cpf) || cpf.isBlank()){
+            throw new Exception(ERROR_CPF_EXISTS);
+        }
+        System.out.print("Password: \n");
+        String password = scanner.nextLine();
+        System.out.print("Street: \n");
+        String street = scanner.nextLine();
+        System.out.print("District: \n");
+        String district = scanner.nextLine();
+        System.out.print("House's number: \n");
+        String number = scanner.nextLine();
+        System.out.print("Zipcode: \n");
+        String zipCode = scanner.nextLine();
+        System.out.print("Phone number: \n");
+        String phoneNumber = scanner.nextLine();
+        customerService.addCustomer(name, cpf, password, street, district, number, zipCode, phoneNumber);
+        initialMenu();
     }
 }
