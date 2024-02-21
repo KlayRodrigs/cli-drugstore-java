@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 import static main.java.constants.Constants.*;
 
-public class MenuView {
+public class MenusView {
     CustomerService customerService = new CustomerService();
     Scanner scanner = new Scanner(System.in);
 
@@ -20,19 +20,20 @@ public class MenuView {
             case 1 -> login(true);
             case 2 -> login(false);
             case 3 -> signUpCustomer();
-            case 0 -> System.out.println("Finalizando sistema...");
+            case 0 -> System.out.println("Ending...");
         }
     }
 
     public void login(Boolean customer) throws Exception {
         String title = customer ? CUSTOMER : ADMINSTRATOR;
         String type = customer ? BD_CUSTOMER : BD_ADMINISTRATOR;
-        System.out.println("-".repeat(13) + title + " login selected" + "-".repeat(13) + "\nCPF(Just numbers): ");
+        System.out.print("-".repeat(13) + title + " login selected" + "-".repeat(13) + "\nCPF(Just numbers): ");
         String cpf = scanner.next();
-        if (cpf.length() != 11) {
-            throw new Exception(ERROR_INVALID_CPF);
+        if (cpf.length() != 11 && customerService.findElement(BD_PATH + type, cpf) ){
+            System.out.println(ERROR_INVALID_CPF);
+            initialMenu();
         }
-        System.out.println("Password: ");
+        System.out.print("Password: ");
         var password = scanner.next();
         if (customerService.loginCheckCredentials(BD_PATH + type, cpf, password)) {
             if (type.equals(BD_CUSTOMER)) {
@@ -80,26 +81,60 @@ public class MenuView {
 
     public void signUpCustomer() throws Exception {
         System.out.println("-".repeat(11) + CUSTOMER + " sign up selected" + "-".repeat(11));
-        System.out.print("Name: \n");
-        scanner.nextLine();
-        String name = scanner.nextLine();
-        System.out.print("CPF(Just numbers): \n");
-        String cpf = scanner.nextLine();
-        if(customerService.findElement(BD_PATH+BD_CUSTOMER, cpf) || cpf.isBlank()){
-            throw new Exception(ERROR_CPF_EXISTS);
+        System.out.print("Name: ");
+        String name = customerService.validInput("generic").toString();
+        if (name.equals("redirect")){
+            initialMenu();
         }
-        System.out.print("Password: \n");
-        String password = scanner.nextLine();
-        System.out.print("Street: \n");
-        String street = scanner.nextLine();
-        System.out.print("District: \n");
-        String district = scanner.nextLine();
-        System.out.print("House's number: \n");
-        String number = scanner.nextLine();
-        System.out.print("Zipcode: \n");
-        String zipCode = scanner.nextLine();
-        System.out.print("Phone number: \n");
-        String phoneNumber = scanner.nextLine();
+        scanner.nextLine();
+        System.out.print("CPF(Just numbers): ");
+        String cpf = scanner.nextLine();
+        for (int i = 1; i < 4; i++) {
+            if(cpf.length() != 11){
+                System.out.println("Invalid format for cpf. Try again("+ i + "/3): ");
+            }
+            else if (customerService.findElement(BD_PATH + BD_CUSTOMER, cpf)) {
+                System.out.println(ERROR_CPF_EXISTS +"Try again("+ i + "/3): ");
+                if (i == 3) {
+                    System.out.println(REDIRECTING);
+                    initialMenu();
+                }
+                cpf = scanner.nextLine();
+            }
+            else{
+                break;
+            }
+        }
+        System.out.print("Password: ");
+        String password = customerService.validInput("generic").toString();
+        if (password.equals("redirect")){
+            initialMenu();
+        }
+        System.out.print("Street: ");
+        String street = customerService.validInput("generic").toString();
+        if (street.equals("redirect")){
+            initialMenu();
+        }
+        System.out.print("District: ");
+        String district = customerService.validInput("generic").toString();
+        if (district.equals("redirect")){
+            initialMenu();
+        }
+        System.out.print("House's number: ");
+        String number = customerService.validInput("generic").toString();
+        if (number.equals("redirect")){
+            initialMenu();
+        }
+        System.out.print("Zipcode: ");
+        String zipCode = customerService.validInput("generic").toString();
+        if (zipCode.equals("redirect")){
+            initialMenu();
+        }
+        System.out.print("Phone number: ");
+        String phoneNumber = customerService.validInput("phone").toString();
+        if (phoneNumber.equals("redirect")){
+            initialMenu();
+        }
         customerService.addCustomer(name, cpf, password, street, district, number, zipCode, phoneNumber);
         initialMenu();
     }
